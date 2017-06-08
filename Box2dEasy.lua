@@ -477,13 +477,19 @@ function loadPhysicsExtension()
 		-- update body type and draggable
 		self.sprites[object.id].body:setType(setType)
 		object.body._conf.type = conf.setType
-		object.body._conf.draggable = conf.draggable
- 
-		if conf.draggable then
-			self:makeDraggable(object)
-		else
-			if object.onDragStart then
-				self:undoDraggable(object)
+		
+		-- condition prevent bug when you change "conf.draggable" many times to "true"
+		-- for more information see this link
+		-- http://giderosmobile.com/forum/discussion/4668/change-body-properties/p1
+		if object.body._conf.draggable ~= conf.draggable then	
+			object.body._conf.draggable = conf.draggable
+
+			if conf.draggable then
+				self:makeDraggable(object)
+			else
+				if object.onDragStart then
+					self:undoDraggable(object)
+				end
 			end
 		end
 		--else
